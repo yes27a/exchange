@@ -6,6 +6,7 @@ from selenium import webdriver
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import pandas as pd
 
 def daum_exchanges():
     
