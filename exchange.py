@@ -88,5 +88,6 @@ def run():
     sd = SaveDatabase(base, daum_exchanges())
     # 데이터 베이스에 저장
     sd.mysql_save()
+    print('saved!')
 
 run()
