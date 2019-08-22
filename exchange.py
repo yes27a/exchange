@@ -2,35 +2,25 @@
 # TODO
 import requests
 from fake_useragent import UserAgent
-from selenium import webdriver
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import pandas as pd
 
+# TODO
 def daum_exchanges():
     
     # TODO
     url = 'https://finance.daum.net/exchanges'
-    driver = webdriver.Chrome()
-    driver.get(url)
-    national0 = driver.find_elements_by_xpath('//*[@id="boxContents"]/div[2]/div[2]/div/table/tbody/tr/td[1]/a')
-    unit0 = driver.find_elements_by_xpath('//*[@id="boxContents"]/div[2]/div[2]/div/table/tbody/tr/td[2]')
-    unit_p0 = driver.find_elements_by_xpath('//*[@id="boxContents"]/div[2]/div[2]/div/table/tbody/tr/td[3]/span')
-    rate_pre0 = driver.find_elements_by_xpath('//*[@id="boxContents"]/div[2]/div[2]/div/table/tbody/tr/td[4]/span')
-    price_buy0 = driver.find_elements_by_xpath('//*[@id="boxContents"]/div[2]/div[2]/div/table/tbody/tr/td[5]/span')
-    price_sell0 = driver.find_elements_by_xpath('//*[@id="boxContents"]/div[2]/div[2]/div/table/tbody/tr/td[6]/span')
-    national = [it.text.split('(')[0].strip() for it in national0]
-    unit = [it.text.strip() for it in unit0]
-    unit_p = [it.text.strip() for it in unit_p0]
-    rate_pre = [it.text[1:].strip() for it in rate_pre0]
-    price_buy = [it.text.strip() for it in price_buy0]
-    price_sell = [it.text.strip() for it in price_sell0]
-    driver.quit()
-    df0 = []
-    for i in range(len(unit)):
-        df0.append({'country':national[i],'currencyName':unit[i],'basePrice':unit_p[i],'changePrice':rate_pre[i],'cashBuyingPrice':price_buy[i],'cashSellingPrice':price_sell[i]})
-    df = pd.DataFrame(df0)    
+    url2 = 'https://finance.daum.net/api/exchanges/summaries'
+    headers = {'User-Agent':UserAgent().Chrome,
+              'referer':'https://finance.daum.net/exchanges'}
+    req = requests.get(url2, headers=headers)
+    jsondata=req.json()['data']
+    df0 = [{'country':a['country'],'currencyName':a['currencyName'],'basePrice':a['basePrice'],'change':'+' if str(a['change'])=='RISE' else '-','changePrice':('+' if str(a['change'])=='RISE' else '-')+str(a['changePrice']),'cashBuyingPrice':a['cashBuyingPrice'],'cashSellingPrice':a['cashSellingPrice']} 
+     for a in jsondata]
+    
+    df = pd.DataFrame(df0,columns=['country','currencyName','basePrice','changePrice','cashBuyingPrice','cashSellingPrice'])    
     
     return df
 
@@ -49,10 +39,10 @@ class ExchangeDaum(base):
     def __init__(self, country, currencyName,basePrice,changePrice,cashBuyingPrice,cashSellingPrice):
         self.country = country
         self.currencyName = currencyName
-        self.basePrice = float(basePrice.replace(',',''))
+        self.basePrice = float(basePrice)
         self.changePrice = changePrice
-        self.cashBuyingPrice = float(cashBuyingPrice.replace(',',''))
-        self.cashSellingPrice = float(cashSellingPrice.replace(',',''))
+        self.cashBuyingPrice = float(cashBuyingPrice)
+        self.cashSellingPrice = float(cashSellingPrice)
 
     def __repr__(self):
         return "<ExchangeDaum>" 
