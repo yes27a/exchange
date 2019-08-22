@@ -76,7 +76,7 @@ class SaveDatabase:
         session = maker()
         
         #data
-        records=[ExchangeDaum(a[1].country,a[1].currencyName,a[1].basePrice,a[1].changePrice,a[1].cashBuyingPrice,a[1].cashSellingPrice) for a in df.iterrows()]
+        records=[ExchangeDaum(a[1].country,a[1].currencyName,a[1].basePrice,a[1].changePrice,a[1].cashBuyingPrice,a[1].cashSellingPrice) for a in self.df.iterrows()]
 
         # save datas
         session.add_all(records)
