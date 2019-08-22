@@ -10,6 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 def daum_exchanges():
     
     # TODO
+    url = 'https://finance.daum.net/exchanges'
     driver = webdriver.Chrome()
     driver.get(url)
     national0 = driver.find_elements_by_xpath('//*[@id="boxContents"]/div[2]/div[2]/div/table/tbody/tr/td[1]/a')
