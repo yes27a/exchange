@@ -3,3 +3,4 @@ requests
 fake_useragent
 pandas
 sqlalchemy
+mysqlclient
